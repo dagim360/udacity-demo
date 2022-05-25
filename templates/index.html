@@ -1,13 +1,18 @@
 <html>
   <head>
     <title>Todo App</title>
+    <style>
+      .hidden{
+        display:none;
+      }
+    </style>
   </head>
   <body>
      <form method="post" action="/todos/create">
        <input type="text" name="description"  />
        <input type="submit" value="Create" />
      </form>
-
+      <div id="error" class ="hidden" >Something went wrong</div>
     <ul>
       {% for d in data %}
       <li>{{ d.description }}</li>
@@ -21,9 +26,27 @@
           body: JSON.stringify({
             'description': document.getElementById('description').value
           }),
-          
+          headers: {
+            'content-Type': 'application/json'
+          }
+
         })
-      }
+        .then(function(response){
+        return response.json();
+      })
+      .then(function(jsonResponse){
+        console.log(jsonResponse);
+        const liItem = document.createElement('LI');
+        liItem.innerHTML = jsonResponse['description'];
+        document.getElementById('todo').appendChild(liItem);
+        document.getElementById('error').className='hidden';
+      })
+          .catch(function(){
+            document.getElementById('error').className='';
+
+          })
+        }
+      
     </script>
   </body>
 </html> 
